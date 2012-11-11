@@ -8,6 +8,9 @@ TallyVotes::TallyVotes(unsigned int group, Printer &prt)
     : group_size(group), prt(prt) {
         assert(group%2 == 1);
         ballots = countOfTrue = 0;
+#if defined( IMPLTYPE_AUTO )
+        voted = 0;
+#endif
     }
 
 TallyVotes::~TallyVotes() {
@@ -17,6 +20,7 @@ TallyVotes::~TallyVotes() {
 bool TallyVotes::vote(unsigned int id, bool ballot) {
     prt.print(id, Voter::Vote, ballot);
     countOfTrue += (int)ballot;
+    // ++ ballots may be moved here
 #if defined( IMPLTYPE_LOCK )		// mutex/condition solution
 #elif defined( IMPLTYPE_EXT )		// external scheduling monitor solution
     if(++ ballots < group_size) {
@@ -39,6 +43,13 @@ bool TallyVotes::vote(unsigned int id, bool ballot) {
         countOfTrue = 0;            // duplicated
     }
 #elif defined( IMPLTYPE_AUTO )		// automatic-signal monitor solution
+    ++ ballots, ++ voted;
+    WAITUNTIL(voted % group_size == 0, prt.print(id, Voter::Block, ballots), prt.print(id, Voter::Unblock, ballots - 1));
+    if(ballots % group_size == 0) { result = countOfTrue * 2 > group_size; countOfTrue = 0; }
+    ballots --;
+    assert(countOfTrue == 0);
+    prt.print(id, Voter::Complete);
+    RETURN(result);
 #elif defined( IMPLTYPE_TASK )		// internal/external scheduling task solution
     prt.print(id, Voter::Block, ++ ballots);
     round.wait();
