@@ -44,7 +44,6 @@ public class q1TallyVotes {
     	totalSize = args.length >= 1 ? Integer.parseInt(args[0]) : 6;
     	groupSize = args.length >= 2 ? Integer.parseInt(args[1]) : 3;
     	seed = (int) (args.length >= 3 ? Integer.parseInt(args[2]) : (new Date()).getTime()%10000);
-    	System.out.printf("%d %d %d\n", totalSize, groupSize, seed);
     	if(totalSize <= 0 || groupSize <= 0 || seed <= 0 || totalSize % groupSize != 0 || groupSize % 2 == 0) {
     		System.out.printf("Usage: Voter.class Voters (> 0 & V mod G = 0, default 6)  Group (> 0 & odd, default 3)  Seed (> 0)\n");
     		return;
