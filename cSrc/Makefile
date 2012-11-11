@@ -39,7 +39,7 @@ ${OBJECTS} : ${MAKEFILE_NAME}					# OPTIONAL : changes to this file => recompile
 
 -include ${DEPENDS}
 
-q1Driver.class : # class files forming 2nd executable with prefix "q1"
+q1Driver.class : q1TallyVotes.class q1PRNG.class q1Voter.class q1Printer.class # class files forming 2nd executable with prefix "q1"
 
 %.class : %.java ${MAKEFILE_NAME}
 	javac $<
