@@ -1,4 +1,4 @@
-public class Printer {
+public class q1Printer {
     private int voters, left;
     private boolean change[];
     private int param[];
@@ -6,7 +6,7 @@ public class Printer {
     	for(int i = 0; i < voters; i ++) {
             if(change[i]) {
                 System.out.printf("%c", states[i].getValue());
-                if(states[i] != Voter.States.Start && states[i] != Voter.States.Complete)
+                if(states[i] != q1Voter.States.Start && states[i] != q1Voter.States.Complete)
                     System.out.printf(" %d", param[i]);
             }
             System.out.print("\t");
@@ -16,12 +16,12 @@ public class Printer {
         for(int i = 0; i < voters; i ++)
             assert(!change[i]);
     }
-    private Voter.States states[];
-    public Printer( int voters ) {
+    private q1Voter.States states[];
+    public q1Printer( int voters ) {
         left = this.voters = voters;
         change = new boolean[voters];
         param = new int[voters];
-        states = new Voter.States[voters];
+        states = new q1Voter.States[voters];
         for(int i = 0; i < voters; i ++)
             System.out.printf("Voter%d\t", i);
         System.out.println();
@@ -37,7 +37,7 @@ public class Printer {
         	System.out.print("=");
         System.out.printf("\nAll tours started\n");
     }
-	public synchronized void print( int id, Voter.States state ) {
+	public synchronized void print( int id, q1Voter.States state ) {
 		/* if the state of id has been updated before, then print the stored states */
 		if(change[id]) printState();
 		assert(!change[id]);
@@ -45,7 +45,7 @@ public class Printer {
 		states[id] = state;
 		change[id] = true;
 		}
-	public synchronized void print( int id, Voter.States state, boolean result ) {
+	public synchronized void print( int id, q1Voter.States state, boolean result ) {
 		/* if the state of id has been updated before, then print the stored states */
 	    if(change[id]) printState();
 	    assert(!change[id]);
@@ -53,7 +53,7 @@ public class Printer {
 	    states[id] = state;
 	    param[id] = result ? 1 : 0;
 	    /* if the new state is finished */
-	    if(state == Voter.States.Finished) {
+	    if(state == q1Voter.States.Finished) {
 	        for(int i = 0; i < voters; i ++)
 	            if(i == id) System.out.printf("F %d\t", param[id]);
 	            else System.out.print("...\t");
@@ -61,7 +61,7 @@ public class Printer {
 	        if(-- left == 0) Finished();
 	    } else change[id] = true;
 	}
-	public synchronized void print( int id, Voter.States state, int numBlocked ) {
+	public synchronized void print( int id, q1Voter.States state, int numBlocked ) {
 		/* if the state of id has been updated before, then print the stored states */
 	    if(change[id]) printState();
 	    assert(!change[id]);

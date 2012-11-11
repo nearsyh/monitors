@@ -1,20 +1,20 @@
 import java.util.Date;
 import java.util.Vector;
 
-public class TallyVotes {
+public class q1TallyVotes {
     private int group_size, ballots;
     Vector<Integer> results = new Vector<Integer>();
     Vector<Integer> waiting = new Vector<Integer>();
-    private Printer prt;
+    private q1Printer prt;
 
-    public TallyVotes(int group, Printer prt) {
+    public q1TallyVotes(int group, q1Printer prt) {
         group_size = group;
         this.prt = prt;
         ballots = 0;
     }
 
     public synchronized int vote(int id, boolean ballot) {
-    	prt.print(id, Voter.States.Vote, ballot);
+    	prt.print(id, q1Voter.States.Vote, ballot);
     	if(ballots % group_size == 0) {
     		results.add(new Integer(0));
     		waiting.add(new Integer(0));
@@ -29,13 +29,13 @@ public class TallyVotes {
     public synchronized boolean getValue(int id, int ticket) {
     	if(ballots < (ticket+1) * group_size) {
     		waiting.set(ticket, waiting.elementAt(ticket) + 1);
-    		prt.print(id, Voter.States.Block, waiting.elementAt(ticket));
+    		prt.print(id, q1Voter.States.Block, waiting.elementAt(ticket));
     		try { wait();
 			} catch (InterruptedException e) { e.printStackTrace(); }
-    		prt.print(id, Voter.States.Unblock, waiting.elementAt(ticket) - 1);
+    		prt.print(id, q1Voter.States.Unblock, waiting.elementAt(ticket) - 1);
     		waiting.set(ticket, waiting.elementAt(ticket) - 1);
     	}
-    	prt.print(id, Voter.States.Complete);
+    	prt.print(id, q1Voter.States.Complete);
     	return results.elementAt(ticket) * 2 > group_size;
     }
     
@@ -50,12 +50,12 @@ public class TallyVotes {
     		return;
     	}
     	
-    	Printer prt = new Printer(totalSize);
-    	TallyVotes tallyVotes = new TallyVotes(groupSize, prt);
-    	Voter voters[] = new Voter[totalSize];
-    	Voter.generator = new PRNG(seed);
+    	q1Printer prt = new q1Printer(totalSize);
+    	q1TallyVotes tallyVotes = new q1TallyVotes(groupSize, prt);
+    	q1Voter voters[] = new q1Voter[totalSize];
+    	q1Voter.generator = new q1PRNG(seed);
     	for(int i = 0; i < totalSize; i ++) {
-    		voters[i] = new Voter(i, tallyVotes, prt);
+    		voters[i] = new q1Voter(i, tallyVotes, prt);
     		voters[i].start();
     	}
     }
